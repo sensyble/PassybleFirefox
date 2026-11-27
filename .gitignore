@@ -1,0 +1,14 @@
+# From the monorepo's root .gitignore
+**/node_modules/
+.DS_Store
+*.iml
+.idea/
+
+# This folder's own .gitignore from the monorepo
+node_modules/
+dist/
+# Firefox and geckodriver fetched for the headless test (npm run firefox)
+.cache/
+
+# Local agent notes, not published
+CLAUDE.md

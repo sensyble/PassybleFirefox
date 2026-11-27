@@ -1,0 +1,44 @@
+# npm audit for the production dependencies and osv-scanner over package-lock.json, development tools included.
+# Runs weekly too, so a new advisory against an unchanged lockfile still shows up. Both read the lockfile only:
+# nothing is installed and no package script runs. Actions are pinned to commit SHAs (the tag in the comment).
+name: Dependency audit
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "29 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  npm-audit:
+    name: npm audit (production dependencies)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # What ships to users is the production dependency tree; development tools are covered by osv-scanner below.
+      - name: npm audit --omit=dev
+        run: npm audit --omit=dev --audit-level=low
+
+  osv-scanner:
+    name: osv-scanner (package-lock.json)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: google/osv-scanner-action/osv-scanner-action@32d3cd482bdadfb38b186c0ad1b031902d55d932 # v2.7.1
+        with:
+          scan-args: |-
+            --lockfile=package-lock.json

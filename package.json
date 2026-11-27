@@ -1,0 +1,21 @@
+{
+  "name": "passyble-firefox",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "description": "Passyble for Firefox: manifest overrides, AMO packaging and tests around the shared extension in ../Extension",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "package": "node scripts/package.mjs",
+    "lint": "web-ext lint --source-dir dist/unpacked --self-hosted --warnings-as-errors=false",
+    "lint:amo": "web-ext lint --source-dir dist/unpacked",
+    "firefox": "npx @puppeteer/browsers install firefox@stable --path .cache",
+    "test:e2e": "node --test --test-concurrency=1 test/e2e/*.e2e.mjs"
+  },
+  "devDependencies": {
+    "@puppeteer/browsers": "3.2.6",
+    "geckodriver": "8.0.0",
+    "web-ext": "10.8.0"
+  }
+}
